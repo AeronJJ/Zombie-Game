@@ -8,19 +8,6 @@
 #include <cstdio>
 #include <cmath>
 
-/*
-enum Keys {
-	KEY_ARROW_DOWN,
-	KEY_ARROW_UP,
-	KEY_ARROW_LEFT,
-	KEY_ARROW_RIGHT,
-	KEY_A,
-	KEY_Q,
-	KEY_E,
-	KEY_SPACE
-};
-*/
-
 enum PinMode {
   PullUp,
   PullDown,
@@ -29,33 +16,33 @@ enum PinMode {
 };
 
 class DigitalIn {
-	public:
-	//DigitalIn(Keys key);
-	DigitalIn();
+public:
+  DigitalIn();
   DigitalIn(PinName pin);
   ~DigitalIn();
-	//Keys key;
-	bool read();
-	void set(bool io);
+
+  bool read();
+  void set(bool io);
   void mode(PinMode mode);
   PinName getPin();
-	private:
-	bool pressed_ = 1;
+  
+private:
+  bool pressed_ = 1;
   PinMode mode_ = PullUp;
   PinName pin_;
 };
 
 
 class AnalogIn {
-	public:
-	AnalogIn();
+public:
+  AnalogIn();
   AnalogIn(PinName pin);
   ~AnalogIn();
-	float read();
-	void set(float io);
+  float read();
+  void set(float io);
   PinName getPin();
-	private:
-	float val_ = 0.5;
+private:
+  float val_ = 0.5;
   PinName pin_;
 };
 
