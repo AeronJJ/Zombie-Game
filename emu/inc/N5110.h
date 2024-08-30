@@ -6,6 +6,8 @@
 #include <SDL.h>
 #undef main
 
+#include <iostream>
+
 #define WIDTH 84
 #define HEIGHT 48
 #define BANKS 6

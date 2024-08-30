@@ -34,6 +34,8 @@ Scene* Renderer::getScene() {
 void Renderer::render() {
   lcd_->clear();
   lcd_->drawCircle(74, 8, 4, FILL_TRANSPARENT);
+  //lcd_->printChar('a', 1, 2);
+  //lcd_->printString("Testing", 3, 3);
   if (world_ != nullptr) {
     world_->resetFocused();
     for (int i = 0; i < world_->getAlive(); i++) {

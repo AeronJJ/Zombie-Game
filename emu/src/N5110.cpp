@@ -249,19 +249,34 @@ int N5110::getPixel(unsigned int const x, unsigned int const y) const {
 void N5110::randomiseBuffer() { }
 
 void N5110::printChar(char const c, unsigned int const x, unsigned int const y) {
+  //std::cout << "Drawing character " << font5x7[(c-32)*5 + 2] << std::endl;
+
+  unsigned int startY = (y - 1) * 8;
+
+  for (int i = 0; i < 5; i++) {
+    for (int j = 0; j < 7; j++) {
+      setPixel(x + i, startY + j, font5x7[(c-32) * 5 + i] & (1 << j));
+    }
+  }
+  /*
   if (y < BANKS) {
     for (int i = 0; i < 5; i++) {
       int pixel_x = x+1;
       if (pixel_x > WIDTH-1) break;
-      
+      setPixel(pixel_x, y, font5x7[(c-32)*5 + i]);
     }
 
     
   }
+  */
 }
 
-void N5110::printString(const char *str, unsigned int const x, unsigned int const y) {
-
+void N5110::printString(const char *str, unsigned int x, unsigned int const y) {
+  while (*str) {
+    printChar(*str, x, y);
+    x += 6;
+    str++;
+  }
 }
 
 void N5110::plotArray(float const array[]) {
