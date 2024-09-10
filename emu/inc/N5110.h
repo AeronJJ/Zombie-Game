@@ -28,6 +28,8 @@ enum LCD_Type {
 
 
 class N5110 {
+private:
+  const char* gameName_ = "NAMEPLACEHOLDER";
 public:
   N5110(PinName const pwrPin, //Pin connected to Vcc on the LCD display
         PinName const scePin, //Pin connected to chip enable

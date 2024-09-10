@@ -39,7 +39,7 @@ bool N5110::init_() {
   tiles_ = new Tileset;
   window_ = NULL;
   if (SDL_Init(SDL_INIT_VIDEO) < 0) return false;
-  window_ = SDL_CreateWindow("Zombie Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+  window_ = SDL_CreateWindow(gameName_, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
   if (window_ == NULL) return false;
   screenSurface_ = SDL_GetWindowSurface(window_);
   return true;
