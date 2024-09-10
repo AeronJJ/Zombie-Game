@@ -1,44 +1,63 @@
-# Compiler and flags
+# Thanks to Job Vranish (https://spin.atomicobject.com/2016/08/26/makefile-c-projects/)
+TARGET_EXEC := final_program
+
+BUILD_DIR := ./build
+SRC_DIRS := ./src ./emu ./inc
+
 CXX = g++
 CXXFLAGS = -Wall -g -std=c++17 $(shell sdl2-config --cflags)
-# Add include directories here
-INCLUDES = -I./emu/inc -I./inc/Engine -I./inc/GameFiles -I./inc/GameFiles/Entities -I./inc/GameFiles/Scenes -I./inc/InputHandler -I./inc/Joystick
 
-# Source files and object files
-SRC_DIR = .
-OBJ_DIR = obj
+# Find all the C and C++ files we want to compile
+# Note the single quotes around the * expressions. The shell will incorrectly expand these otherwise, but we want to send the * directly to the find command.
+SRCS := $(shell find $(SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
 
-# Gather all .cpp files from all source directories (including root)
-SRCS = $(shell find $(SRC_DIRS) -name '*.cpp')
+# Prepends BUILD_DIR and appends .o to every src file
+# As an example, ./your_dir/hello.cpp turns into ./build/./your_dir/hello.cpp.o
+OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 
-# Convert .cpp files to .o object files (also for root)
-OBJS = $(SRCS:%.cpp=$(OBJ_DIR)/%.o)
+# String substitution (suffix version without %).
+# As an example, ./build/hello.cpp.o turns into ./build/hello.cpp.d
+DEPS := $(OBJS:.o=.d)
 
-# Target executable
-TARGET = Zombie-Game
+# Every folder in ./src will need to be passed to GCC so that it can find header files
+INC_DIRS := $(shell find $(SRC_DIRS) -type d)
+# Add a prefix to INC_DIRS. So moduleA would become -ImoduleA. GCC understands this -I flag
+INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-# Default target to build the program
-all: $(TARGET)
+# The -MMD and -MP flags together generate Makefiles for us!
+# These files will have .d instead of .o as the output.
+CPPFLAGS := $(INC_FLAGS) -MMD -MP
 
-# Rule to link object files and create executable
-$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^ $(shell sdl2-config --libs)
+# The final build step.
+$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
+	$(CXX) $(OBJS) -o $@ $(LDFLAGS) $(shell sdl2-config --libs)
+	python ./scripts/Emu/restore.py
 
-# Rule to compile source files into object files
-$(OBJ_DIR)/%.o: %.cpp
-	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+# Build step for C source
+$(BUILD_DIR)/%.c.o: %.c
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-# Automatically generate dependencies (.d files)
-DEPFILES = $(OBJS:.o=.d)
--include $(DEPFILES)
+# Build step for C++ source
+$(BUILD_DIR)/%.cpp.o: %.cpp $(BUILD_DIR)/src/main.cpp.o
+	mkdir -p $(dir $@)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/%.d: %.cpp
-	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -MM $< > $@.$$$$; \
-	sed 's,\($*\)\.o[ :]*,$(OBJ_DIR)/\1.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
+$(BUILD_DIR)/src/main.cpp.o:
+	python ./scripts/Emu/modify.py
+	mkdir -p $(dir $@)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c ./src/main.cpp -o $@
+	# python ./scripts/Emu/restore.py
 
-# Clean up generated files
+.PHONY: restore
+restore:
+	python ./scripts/Emu/restore.py
+
+.PHONY: clean
 clean:
-	rm -rf $(OBJ_DIR) $(TARGET) $(DEPFILES)
+	rm -r $(BUILD_DIR)
+
+# Include the .d makefiles. The - at the front suppresses the errors of missing
+# Makefiles. Initially, all the .d files will be missing, and we don't want those
+# errors to show up.
+-include $(DEPS)

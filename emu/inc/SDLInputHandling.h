@@ -12,6 +12,7 @@ class SDLInputHandling {
   SDLInputHandling();
   bool checkInputs();
  private:
+  void init_();
   void fillMap_();
   void setButton(int buttonEnumVal, bool pressed);
   void setAnalog(int analogEnumVal, float val);
@@ -23,4 +24,5 @@ class SDLInputHandling {
   int maxInputs_;
   DigitalIn** digitals_;
   AnalogIn** analogs_;
+  bool initialised_;
 };

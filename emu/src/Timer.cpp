@@ -4,6 +4,11 @@ void wait_us(int us) {
   //usleep(us);
 }
 
+void thread_sleep_for(int delay) {
+  std::chrono::milliseconds msDelay = std::chrono::milliseconds(delay);
+  ThisThread::sleep_for(msDelay);
+}
+
 int Elapsed::count() {
 	return time;
 }

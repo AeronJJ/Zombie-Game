@@ -63,7 +63,7 @@ public:
 private:
   void sortDigitals_();
   DigitalIn** digitals_;
-  int maxInputs_ = 20;
+  const int maxInputs_ = 20;
   int nextDigitalFree_;
 
   //void sortAnalogs_();
@@ -73,4 +73,4 @@ private:
   bool remapRequired_ = false;
 };
 
-extern IOContainer BUTTONLIST;
+extern IOContainer* BUTTONLIST;

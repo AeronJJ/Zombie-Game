@@ -9,6 +9,7 @@ using namespace std::literals::chrono_literals; // Mucky wucky // This is how Mb
 namespace ThisThread = std::this_thread;
 
 void wait_us(int us);
+void thread_sleep_for(int delay);
 
 struct Elapsed {
 	int time;

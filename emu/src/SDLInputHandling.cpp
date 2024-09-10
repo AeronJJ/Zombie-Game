@@ -1,16 +1,27 @@
 #include "SDLInputHandling.h"
 
 SDLInputHandling::SDLInputHandling() {
-  maxInputs_ = BUTTONLIST.getMaxInputs();
-  digitals_ = BUTTONLIST.getDigitals();
-  analogs_ = BUTTONLIST.getAnalogs();
+  initialised_ = false;
+  if (BUTTONLIST == nullptr) {
+    BUTTONLIST = new IOContainer;
+  }
+  init_();
+  //std::cout << "Inputs created\n";
+}
+
+void SDLInputHandling::init_() {
+  maxInputs_ = BUTTONLIST->getMaxInputs();
+  digitals_ = BUTTONLIST->getDigitals();
+  analogs_ = BUTTONLIST->getAnalogs();
   fillMap_();
+  initialised_ = true;
 }
 
 bool SDLInputHandling::checkInputs() {
-  if (BUTTONLIST.remapRequired()) fillMap_();
+  //std::cout << "Checking Inputs Start\n";
+  //if (!initialised_) init_();
+  if (BUTTONLIST->remapRequired()) fillMap_();
   while (SDL_PollEvent(&e_) != 0) {
-    
     if (e_.type == SDL_QUIT) {
       quit_ = true;
       return quit_;
@@ -19,21 +30,21 @@ bool SDLInputHandling::checkInputs() {
     switch (e_.type) {
     case SDL_KEYDOWN:
       if (keyMap_[key] > 0) {
-    //std::cout << "Checking Inputs!\n";
-    setButton(keyMap_[key], false);
+	//std::cout << "Checking Inputs!\n";
+	setButton(keyMap_[key], false);
       }
       if (analogKeyMap_.count(key) > 0) {
-    float dir = 1.0;
-    if (key == SDLK_UP || key == SDLK_LEFT) dir = 0.0;
-    setAnalog(analogKeyMap_[key], dir);
+	float dir = 1.0;
+	if (key == SDLK_UP || key == SDLK_LEFT) dir = 0.0;
+	setAnalog(analogKeyMap_[key], dir);
       }
       break;
     case SDL_KEYUP:
       if (keyMap_[key] > 0) {
-    setButton(keyMap_[key], true);
+	setButton(keyMap_[key], true);
       }
       if (analogKeyMap_.count(key) > 0) {
-    setAnalog(analogKeyMap_[key], 0.5);
+	setAnalog(analogKeyMap_[key], 0.5);
       }
       break;
     default:
@@ -51,10 +62,16 @@ void SDLInputHandling::setButton(int buttonEnumVal, bool pressed) {
       digitals_[i]->set(pressed);
     }
   }*/
-    digitals_[pinToIndex_[buttonEnumVal]]->set(pressed);
+  //std::cout << "Set Button start\n";
+  //std::cout << buttonEnumVal << std::endl;
+  //std::cout << pinToIndex_[buttonEnumVal] << std::endl;
+  //std::cout << KB_SPACE << std::endl;
+  digitals_[pinToIndex_[buttonEnumVal]]->set(pressed);
+  //std::cout << "Set Button end\n";
 }
 
 void SDLInputHandling::setAnalog(int analogEnumVal, float val) {
+  //std::cout << "Setting Analogs\n";
   for (int i = 0; i < maxInputs_; i++) {
     if (analogs_[i] != nullptr && analogs_[i]->getPin() == analogEnumVal) {
       analogs_[i]->set(val);
@@ -112,13 +129,16 @@ void SDLInputHandling::fillMap_() {
   pinToIndex_.clear();
 
   for (auto const& x : keyMap_) {
+    //std::cout << "First: " << x.first << ", Second: " << x.second << std::endl;
     if (x.second > 0) {
-        for (int i = 0; i < maxInputs_; i++) {
-            if (digitals_[i] != nullptr && digitals_[i]->getPin() == x.second) {
-                pinToIndex_[x.second] = i;
-            }
-        }
+      //std::cout << "Max inputs; " << maxInputs_ << std::endl;
+      for (int i = 0; i < maxInputs_; i++) {
+	//if (digitals_[i] != nullptr) std::cout << digitals_[i]->getPin() << std::endl;
+	if (digitals_[i] != nullptr && digitals_[i]->getPin() == x.second) {
+	  pinToIndex_[x.second] = i;
+	  //std::cout << i << std::endl;
+	}
+      }
     }
   }
-
 }

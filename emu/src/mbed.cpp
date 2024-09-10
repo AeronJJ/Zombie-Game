@@ -8,12 +8,13 @@
 IOContainer::IOContainer() {
   // Poor mans linked list - used for like the fifth time in this project
   // Now that I've said that, it's obvious to see that this data structure should be implemented with a template
-  // TODO: Implement the below as a template.
+  // TODO: Implement the below as a template. Or just use vectors...
   digitals_ = new DigitalIn*[maxInputs_];
   for (int i = 0; i < maxInputs_; i++) {
     digitals_[i] = nullptr;
   }
   nextDigitalFree_ = 0;
+  //std::cout << "Digitals created\n";
 
   analogs_ = new AnalogIn*[maxInputs_];
   for (int i = 0; i < maxInputs_; i++) {
@@ -27,6 +28,7 @@ void IOContainer::addDigitalIn(DigitalIn* obj) {
     digitals_[nextDigitalFree_] = obj;
     nextDigitalFree_++;
     remapRequired_ = true;
+    ///std::cout << "DigitalIn object added in pos: " << nextDigitalFree_ << std::endl;
   }
 }
 
@@ -82,16 +84,20 @@ bool IOContainer::remapRequired() {
 }
 
 
-IOContainer BUTTONLIST; // Global object eww.
+IOContainer* BUTTONLIST = nullptr; // Global object eww.
 
 DigitalIn::DigitalIn() { }
 
 DigitalIn::DigitalIn(PinName pin) : pin_(pin) {
-  BUTTONLIST.addDigitalIn(this);
+  if (BUTTONLIST == nullptr) {
+    BUTTONLIST = new IOContainer;
+  }
+  BUTTONLIST->addDigitalIn(this);
 }
 
+
 DigitalIn::~DigitalIn() {
-  BUTTONLIST.removeDigitalIn(this);
+  BUTTONLIST->removeDigitalIn(this);
 }
 
 
@@ -119,11 +125,15 @@ PinName DigitalIn::getPin() {
 AnalogIn::AnalogIn() { }
 
 AnalogIn::AnalogIn(PinName pin) : pin_(pin) {
-  BUTTONLIST.addAnalogIn(this);
+  //std::cout << "AnalogIn Created\n";
+  if (BUTTONLIST == nullptr) {
+    BUTTONLIST = new IOContainer;
+  }
+  BUTTONLIST->addAnalogIn(this);
 }
 
 AnalogIn::~AnalogIn() {
-  BUTTONLIST.removeAnalogIn(this);
+  BUTTONLIST->removeAnalogIn(this);
 }
 
 float AnalogIn::read() {
