@@ -12,7 +12,7 @@ int main() {
 
   //SDLInputHandling inputs;
   
-  //while(!inputs.checkInputs() && !inputs.checkInputs()) {
+  //while(!inputs.checkInputs() && !inputs.checkInputs() && !inputs.checkInputs()) {
   while(true) {
     game.run();
   }

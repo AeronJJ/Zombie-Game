@@ -26,7 +26,7 @@ origs = find_files(nameTarget, "./")
 if len(backups) > 0:
     backupNameTarget = backups[0]
     nameTarget = origs[0]
-    print(f"Restoring {backupNameTarget} to {nameTarget}")
+    print(f"\nRestoring {backupNameTarget} to {nameTarget}")
     restore(nameTarget, backupNameTarget)
 
 
@@ -41,7 +41,6 @@ dups = find_files(dupcpp, "./")
 if len(dups) > 0:
     dupcpp = dups[0]
     print(f"Found at {dupcpp}")
-    print(f"Reading backup {dupcpp}")
     restore(cpp, dupcpp)
 else:
     print(f"Backup file not found")
