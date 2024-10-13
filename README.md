@@ -4,16 +4,30 @@
 
 ### Linux:
 - Make sure SDL2 is installed on your system ([https://wiki.libsdl.org/SDL2/Installation](https://wiki.libsdl.org/SDL2/Installation))
+- Ensure Python is installed and available, OR modify Makefile to not run the scripts, and instead manually modify main.cpp as described below.
 - Download source code and run `make` in source root
 - Done!
 
-### Windows:
-- Todo.
+### Windows (Visual Studio):
+- Setup SDL in Visual Studio following this guide: [https://lazyfoo.net/tutorials/SDL/01_hello_SDL/windows/msvc2019/index.php](https://lazyfoo.net/tutorials/SDL/01_hello_SDL/windows/msvc2019/index.php)
+- Add all relevant files from /src, /inc, and /emu to the project
+- Modify main.cpp file as described below
+- Build!
 
 ### Mac:
 - Todo.
 
+### Screenshots:
+
+Here is the game on the original hardware:
+
+![HW Menu](media/HW_menu.jpg)
+
+And here is the "emulated" version running on Linux:
+
 ![Game Menu](media/SDL_menu.png)
+
+Apart from the position of the crosshair (which is controlled by either the joystick or the arrow keys), you can see the "emulated" version is a one-to-one copy of the original using the same source files.
 
 
 ## Background
@@ -32,7 +46,7 @@ The emulator is incomplete, it is missing a lot of functionality provided by MBe
 
 The emulator requires minor modifications to your project's source code and is not guaranteed to work with your porject. Specifically, it will require an extra condition in all of your `while` blocks that require inputs to be executed inside. This is because the inputs are handled in the same thread as the game is running, so in order to change the state of a button, the `checkInputs()` function of the `SDLInputHandling` object needs to be called. In the future, I would like this to be done in a separate thread to better emulate the action of inputs changing state. I would recommend for you to only use one while loop kept inside your main.cpp file. This is generally good game design (see: [https://gameprogrammingpatterns.com/game-loop.html](https://gameprogrammingpatterns.com/game-loop.html)) and will make using this emulator much easier.
 
-To use the emulator, download the `emu` folder in this repository and put it in a new folder. Add all of your games source files to this folder as well EXCEPT from the `N5110` folder and any mbed files present in your project. If you are using Mbed Studio it might make more sense to create a symbolic link to your project files instead so that you do not have to keep copying files back and forth when you modify them. You could also add the files to a Visual Studio project instead which will not move them (This is what I recommend). Bear in mind you will likely have to keep two different `main.cpp` due to the modifications we will make now.
+To use the emulator, download the `emu` folder in this repository and put it in a new folder. Add all of your games source files to this folder as well EXCEPT from the `N5110` folder and any mbed files present in your project. If you are using Mbed Studio it might make more sense to create a symbolic link to your project files instead so that you do not have to keep copying files back and forth when you modify them. You could also add the files to a Visual Studio project instead which will not move them (This is what I recommend). Bear in mind you will likely have to keep two different `main.cpp` due to the modifications we will make now. Using the Linux Makefile, these changes are automatically made when `make` is run, python scripts insert the necessary code in the main.cpp and also restore them once complete.
 
 In your main.cpp, replace `int main() {` whith `int main(int argc, char* args[]){`, this allows SDL to "hook" into your program. Also add `#include "SDLInputHandling.h"` to the top of your file. You also need to create an instance of the `SDLInputHandling` object, I call this object `inputs`. This can be global if you have multiple while loops in different functions.
 

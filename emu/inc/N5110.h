@@ -4,7 +4,7 @@
 #include "Timer.h"
 #include "mbed.h"
 #include <SDL.h>
-#undef main
+#undef main // Weird SDL thing
 
 #include <iostream>
 
@@ -50,14 +50,14 @@ public:
   
   ~N5110();
   
-	N5110(Tileset* tiles, SDL_Window* window, SDL_Surface* screenSurface);
+  N5110(Tileset* tiles, SDL_Window* window, SDL_Surface* screenSurface);
 
-	void setPixel(unsigned int const x, unsigned int const y, bool const state);
-	void refresh();
-	void clear();
-  void drawSprite(int x0, int y0, int nrows, int ncols, int* sprite, bool reverse);
-	void inverseMode();
-	void normalMode();
+  void setPixel(unsigned int const x, unsigned int const y, bool const state);
+  void refresh();
+  void clear();
+  void drawSprite(int x0, int y0, int nrows, int ncols, int* sprite, bool reverse = false);
+  void inverseMode();
+  void normalMode();
 
   void init(LCD_Type const lcd);
 
@@ -70,7 +70,6 @@ public:
   void drawLine(unsigned int const x0, unsigned int const y0, unsigned int const x1, unsigned int const y1, unsigned int const type);
   void drawRect(unsigned int const x0, unsigned int const y0, unsigned int const width, unsigned int const height, FillType const fill);
   
-
   void printString(char const *str, unsigned int const c, unsigned int const y);
   void printChar(char const c, unsigned int const x, unsigned int const y);
   void clearPixel(unsigned int const x, unsigned int const y);
@@ -78,11 +77,11 @@ public:
   void randomiseBuffer();
   void plotArray(float const array[]);
 
-	private:
+private:
   bool init_();
-	Tileset* tiles_;
-	SDL_Window* window_;
-	SDL_Surface* screenSurface_;
+  Tileset* tiles_;
+  SDL_Window* window_;
+  SDL_Surface* screenSurface_;
   unsigned char buffer[84][6];
 
   void setXYAddress(unsigned int const x, unsigned int const y);
