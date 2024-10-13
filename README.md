@@ -13,6 +13,8 @@
 ### Mac:
 - Todo.
 
+![Game Menu](media/SDL_menu.png)
+
 
 ## Background
 This project started as an embedded systems project for Uni, the goal to be to create a game to run on an STM32L4 microcontroller using a Nucleo-L476RG development board and MBed OS. It utilised a Nokia-N5510 screen to display the game, and a joystick with some push buttons as primitive controls.
